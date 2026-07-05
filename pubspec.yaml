@@ -2,7 +2,9 @@ name: hive_restaurant
 description: "Dejen restaurant owner companion app"
 publish_to: 'none'
 
-version: 1.0.0+1
+# Build number is the strictly-increasing minutes-since-2024-01-01 value CI
+# computes; kept high here as the local-build fallback (see play-store.yml).
+version: 1.0.0+1319910
 
 environment:
   sdk: ^3.12.0
