@@ -4,7 +4,7 @@ publish_to: 'none'
 
 # Build number is the strictly-increasing minutes-since-2024-01-01 value CI
 # computes; kept high here as the local-build fallback (see play-store.yml).
-version: 1.0.0+1319910
+version: 1.0.0+1319986
 
 environment:
   sdk: ^3.12.0
@@ -41,6 +41,10 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
 
+  # Dejen launcher icon + native splash generators (see the two config yamls).
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.4
+
 # Vendored fork of pusher_channels_flutter that adds self-hosted host/port
 # support to init() — needed to reach our Reverb server (upstream 2.6.0 only
 # supports pusher.com clusters). Same fork the Rider/Driver apps vendor.
@@ -50,3 +54,8 @@ dependency_overrides:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/branding/
+    - assets/branding/icon/
+    - assets/branding/splash/

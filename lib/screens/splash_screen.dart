@@ -39,15 +39,10 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 88,
-              width: 88,
-              decoration: BoxDecoration(
-                color: AppColors.primary,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Icon(Icons.restaurant_menu,
-                  color: Colors.white, size: 46),
+            Image.asset(
+              'assets/branding/dejen_symbol_white.png',
+              height: 104,
+              width: 104,
             ),
             const SizedBox(height: 20),
             Text(

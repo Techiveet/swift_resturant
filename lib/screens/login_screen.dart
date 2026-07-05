@@ -59,15 +59,10 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    height: 72,
-                    width: 72,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(Icons.restaurant_menu,
-                        color: Colors.white, size: 38),
+                  Image.asset(
+                    'assets/branding/dejen_symbol.png',
+                    height: 84,
+                    width: 84,
                   ),
                   const SizedBox(height: 24),
                   Text(

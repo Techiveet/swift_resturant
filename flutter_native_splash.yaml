@@ -1,0 +1,20 @@
+# Dejen splash screen. Run:  dart run flutter_native_splash:create --path=flutter_native_splash.yaml
+flutter_native_splash:
+  # Light mode: white background (not black); dark mode: charcoal-pine.
+  color: "#FFFFFF"
+  image: assets/branding/splash/dejen_splash_logo.png
+  color_dark: "#0C1813"
+  image_dark: assets/branding/splash/dejen_splash_logo.png
+
+  # Android 12+ shows the splash icon inside a circle. Setting icon_background_color
+  # to match the splash background makes that circle blend in (no visible disc — just
+  # the shield).
+  android_12:
+    color: "#FFFFFF"
+    image: assets/branding/splash/dejen_splash_logo.png
+    color_dark: "#0C1813"
+    image_dark: assets/branding/splash/dejen_splash_logo.png
+
+  android: true
+  ios: true
+  web: false
