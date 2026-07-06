@@ -6,6 +6,7 @@ class Urls {
   static const String baseUrl = '${Environment.domainUrl}/api/';
 
   static const String login = 'restaurant/login';
+  static const String register = 'restaurant/register';
   static const String orders = 'restaurant/orders';
   static const String orderDetails = 'restaurant/orders/details/'; // + {id}
   static const String saveDeviceToken = 'restaurant/save-device-token';

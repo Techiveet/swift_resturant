@@ -63,6 +63,36 @@ class AuthController extends GetxController {
     }
   }
 
+  /// Submit a self-registration. Returns null on success (the account is then
+  /// pending admin approval — no token is issued), or an error message.
+  Future<String?> register({
+    required String name,
+    required String username,
+    required String password,
+    String? email,
+    String? phone,
+    String? address,
+  }) async {
+    busy.value = true;
+    try {
+      final res = await _api.post(Urls.register, {
+        'name': name.trim(),
+        'username': username.trim(),
+        'password': password,
+        if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
+        if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
+        if (address != null && address.trim().isNotEmpty) 'address': address.trim(),
+      });
+      if (!res.success) {
+        final msg = res.firstMessage;
+        return msg.isNotEmpty ? msg : 'Registration failed. Please try again.';
+      }
+      return null;
+    } finally {
+      busy.value = false;
+    }
+  }
+
   Future<void> logout() async {
     // Best-effort server-side token revocation; we clear locally regardless.
     try {

@@ -5,6 +5,7 @@ import '../core/theme.dart';
 import '../data/controllers/auth_controller.dart';
 import '../environment.dart';
 import 'orders_screen.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -127,7 +128,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           : const Text('Sign in'),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text('New here?',
+                          style: TextStyle(color: AppColors.muted)),
+                      TextButton(
+                        onPressed: () =>
+                            Get.to<void>(() => const RegisterScreen()),
+                        child: const Text('Register your restaurant'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
                   Text(
                     '${Environment.appName} • v${Environment.version}',
                     textAlign: TextAlign.center,
