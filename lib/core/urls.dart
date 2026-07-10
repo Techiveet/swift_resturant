@@ -18,7 +18,9 @@ class Urls {
   static const String menuUpdate = 'restaurant/menu/update/'; // + {id}
   static const String menuDelete = 'restaurant/menu/delete/'; // + {id}
   static const String menuToggle = 'restaurant/menu/toggle/'; // + {id}
+  static const String profileImages = 'restaurant/profile/images';
   static const String saveDeviceToken = 'restaurant/save-device-token';
-  static const String pusherAuth = 'restaurant/pusher/auth/'; // + {socketId}/{channel}
+  static const String pusherAuth =
+      'restaurant/pusher/auth/'; // + {socketId}/{channel}
   static const String logout = 'restaurant/logout';
 }

@@ -10,6 +10,8 @@ class FoodMenuItem {
     required this.price,
     this.image,
     required this.available,
+    this.arModelUrl,
+    this.arIosModelUrl,
   });
 
   final int id;
@@ -18,6 +20,8 @@ class FoodMenuItem {
   final double price;
   final String? image;
   final bool available;
+  final String? arModelUrl;
+  final String? arIosModelUrl;
 
   String? get imageUrl {
     if (image == null || image!.isEmpty) return null;
@@ -32,6 +36,8 @@ class FoodMenuItem {
       price: _asDouble(json['price']),
       image: json['image']?.toString(),
       available: _asInt(json['status'], fallback: 1) == 1,
+      arModelUrl: json['ar_model_url']?.toString(),
+      arIosModelUrl: json['ar_ios_model_url']?.toString(),
     );
   }
 }

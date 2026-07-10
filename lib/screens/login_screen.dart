@@ -90,8 +90,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       labelText: 'Username',
                       prefixIcon: Icon(Icons.person_outline),
                     ),
-                    validator: (v) =>
-                        (v == null || v.trim().isEmpty) ? 'Enter your username' : null,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? 'Enter your username'
+                        : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
@@ -104,7 +105,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
                         icon: Icon(
-                            _obscure ? Icons.visibility_off : Icons.visibility),
+                          _obscure ? Icons.visibility_off : Icons.visibility,
+                        ),
                         onPressed: () => setState(() => _obscure = !_obscure),
                       ),
                     ),
@@ -121,8 +123,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 22,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.4,
-                                valueColor:
-                                    AlwaysStoppedAnimation(Colors.white),
+                                valueColor: AlwaysStoppedAnimation(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text('Sign in'),
@@ -132,8 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text('New here?',
-                          style: TextStyle(color: AppColors.muted)),
+                      const Text(
+                        'New here?',
+                        style: TextStyle(color: AppColors.muted),
+                      ),
                       TextButton(
                         onPressed: () =>
                             Get.to<void>(() => const RegisterScreen()),
@@ -145,7 +150,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     '${Environment.appName} • v${Environment.version}',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: AppColors.muted, fontSize: 12),
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),

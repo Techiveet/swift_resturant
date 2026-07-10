@@ -21,8 +21,14 @@ Future<void> main() async {
   // alive for the process lifetime (no auto-dispose between routes).
   Get.put<AppStorage>(storage, permanent: true);
   Get.put<ApiService>(api, permanent: true);
-  final auth = Get.put<AuthController>(AuthController(api, storage), permanent: true);
-  final orders = Get.put<OrdersController>(OrdersController(api), permanent: true);
+  final auth = Get.put<AuthController>(
+    AuthController(api, storage),
+    permanent: true,
+  );
+  final orders = Get.put<OrdersController>(
+    OrdersController(api),
+    permanent: true,
+  );
   Get.put<RealtimeController>(
     RealtimeController(storage, orders, auth),
     permanent: true,

@@ -9,6 +9,7 @@ import '../data/controllers/realtime_controller.dart';
 import '../data/models/food_order.dart';
 import 'login_screen.dart';
 import 'menu_screen.dart';
+import 'restaurant_pictures_screen.dart';
 import 'order_detail_screen.dart';
 import 'order_status_chip.dart';
 
@@ -57,7 +58,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
     final error = await _orders.setOpen(next);
     if (!mounted) return;
     Get.snackbar(
-      error == null ? (next ? 'Open for orders' : 'Now closed') : 'Could not update',
+      error == null
+          ? (next ? 'Open for orders' : 'Now closed')
+          : 'Could not update',
       error ?? (next ? 'Customers can order again.' : 'New orders are paused.'),
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: error == null ? AppColors.primary : AppColors.danger,
@@ -79,8 +82,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Log out',
-                style: TextStyle(color: AppColors.danger)),
+            child: const Text(
+              'Log out',
+              style: TextStyle(color: AppColors.danger),
+            ),
           ),
         ],
       ),
@@ -103,10 +108,15 @@ class _OrdersScreenState extends State<OrdersScreen> {
             children: [
               Text(
                 _auth.restaurant.value?.name ?? 'Orders',
-                style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-              const Text('Live orders',
-                  style: TextStyle(fontSize: 12, color: Colors.white70)),
+              const Text(
+                'Live orders',
+                style: TextStyle(fontSize: 12, color: Colors.white70),
+              ),
             ],
           ),
         ),
@@ -126,14 +136,20 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(open ? Icons.check_circle : Icons.pause_circle_filled,
-                        size: 15, color: Colors.white),
+                    Icon(
+                      open ? Icons.check_circle : Icons.pause_circle_filled,
+                      size: 15,
+                      color: Colors.white,
+                    ),
                     const SizedBox(width: 5),
-                    Text(open ? 'Open' : 'Closed',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12)),
+                    Text(
+                      open ? 'Open' : 'Closed',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -143,6 +159,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
             tooltip: 'Menu',
             icon: const Icon(Icons.restaurant_menu),
             onPressed: () => Get.to<void>(() => const MenuScreen()),
+          ),
+          IconButton(
+            tooltip: 'Restaurant pictures',
+            icon: const Icon(Icons.add_photo_alternate_outlined),
+            onPressed: () =>
+                Get.to<void>(() => const RestaurantPicturesScreen()),
           ),
           IconButton(
             tooltip: 'Refresh',
@@ -228,14 +250,17 @@ class _OrderCard extends StatelessWidget {
                             color: AppColors.ink,
                           ),
                         ),
-                        if (order.isLive && order.restaurantStatus != KitchenStatus.rejected) ...[
+                        if (order.isLive &&
+                            order.restaurantStatus !=
+                                KitchenStatus.rejected) ...[
                           const SizedBox(height: 2),
                           Text(
                             order.kitchenLabel,
                             style: const TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700),
+                              color: AppColors.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ],
                       ],
@@ -247,8 +272,11 @@ class _OrderCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.person_outline,
-                      size: 16, color: AppColors.muted),
+                  const Icon(
+                    Icons.person_outline,
+                    size: 16,
+                    color: AppColors.muted,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -262,11 +290,16 @@ class _OrderCard extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.receipt_long_outlined,
-                      size: 16, color: AppColors.muted),
+                  const Icon(
+                    Icons.receipt_long_outlined,
+                    size: 16,
+                    color: AppColors.muted,
+                  ),
                   const SizedBox(width: 6),
-                  Text('${order.itemCount} item(s)',
-                      style: const TextStyle(color: AppColors.muted)),
+                  Text(
+                    '${order.itemCount} item(s)',
+                    style: const TextStyle(color: AppColors.muted),
+                  ),
                   const Spacer(),
                   Text(
                     money(order.amount),
@@ -311,15 +344,20 @@ class _EmptyState extends StatelessWidget {
                 children: [
                   Icon(Icons.inbox_outlined, size: 64, color: AppColors.muted),
                   SizedBox(height: 16),
-                  Text('No orders yet',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.ink)),
+                  Text(
+                    'No orders yet',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.ink,
+                    ),
+                  ),
                   SizedBox(height: 6),
-                  Text('New orders will appear here automatically.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.muted)),
+                  Text(
+                    'New orders will appear here automatically.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: AppColors.muted),
+                  ),
                 ],
               ),
             ),
@@ -346,9 +384,11 @@ class _ErrorState extends StatelessWidget {
           children: [
             const Icon(Icons.cloud_off, size: 56, color: AppColors.muted),
             const SizedBox(height: 16),
-            Text(message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.muted)),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.muted),
+            ),
             const SizedBox(height: 20),
             SizedBox(
               width: 160,

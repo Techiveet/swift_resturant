@@ -20,6 +20,7 @@ dependencies:
 
   # Networking
   dio: ^5.9.2
+  image_picker: ^1.2.1
 
   # Local persistence (auth token, cached restaurant)
   shared_preferences: ^2.5.5

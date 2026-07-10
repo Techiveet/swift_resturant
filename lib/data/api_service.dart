@@ -28,7 +28,9 @@ class ApiResult {
   /// First message string from the backend envelope, if any.
   String get firstMessage {
     if (message != null && message!.isNotEmpty) return message!;
-    if (body is Map && body['message'] is List && (body['message'] as List).isNotEmpty) {
+    if (body is Map &&
+        body['message'] is List &&
+        (body['message'] as List).isNotEmpty) {
       return (body['message'] as List).first.toString();
     }
     return '';
@@ -69,24 +71,39 @@ class ApiService {
     Map<String, dynamic>? data, {
     bool auth = false,
   }) async {
-    return _wrap(() => _dio.post(
-          '${Urls.baseUrl}$path',
-          data: data,
-          options: auth ? _authOptions() : null,
-        ));
+    return _wrap(
+      () => _dio.post(
+        '${Urls.baseUrl}$path',
+        data: data,
+        options: auth ? _authOptions() : null,
+      ),
+    );
   }
 
   Future<ApiResult> get(String path, {bool auth = true}) async {
-    return _wrap(() => _dio.get(
-          '${Urls.baseUrl}$path',
-          options: auth ? _authOptions() : null,
-        ));
+    return _wrap(
+      () => _dio.get(
+        '${Urls.baseUrl}$path',
+        options: auth ? _authOptions() : null,
+      ),
+    );
+  }
+
+  Future<ApiResult> postMultipart(String path, FormData data) async {
+    return _wrap(
+      () => _dio.post(
+        '${Urls.baseUrl}$path',
+        data: data,
+        options: _authOptions(),
+      ),
+    );
   }
 
   Future<ApiResult> _wrap(Future<Response> Function() call) async {
     try {
       final res = await call();
-      final ok = res.statusCode == 200 &&
+      final ok =
+          res.statusCode == 200 &&
           res.data is Map &&
           (res.data['status'] == 'success');
       return ApiResult(
@@ -102,7 +119,12 @@ class ApiService {
         message: 'Network error. Please check your connection.',
       );
     } catch (e) {
-      return ApiResult(success: false, statusCode: 0, body: null, message: e.toString());
+      return ApiResult(
+        success: false,
+        statusCode: 0,
+        body: null,
+        message: e.toString(),
+      );
     }
   }
 }

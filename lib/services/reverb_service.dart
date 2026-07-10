@@ -21,15 +21,13 @@ class ReverbService {
 
   bool _initializing = false;
 
-  bool get isConnected =>
-      _pusher.connectionState.toLowerCase() == 'connected';
+  bool get isConnected => _pusher.connectionState.toLowerCase() == 'connected';
 
   void addListener(PusherEventHandler handler) {
     if (!_listeners.contains(handler)) _listeners.add(handler);
   }
 
-  void removeListener(PusherEventHandler handler) =>
-      _listeners.remove(handler);
+  void removeListener(PusherEventHandler handler) => _listeners.remove(handler);
 
   Future<void> connect(String channel) async {
     if (_initializing) return;
@@ -43,8 +41,8 @@ class ReverbService {
       final host = (cfg['host'] ?? '').toString();
       final scheme = (cfg['scheme'] ?? 'https').toString().toLowerCase();
       final useTLS = scheme == 'https';
-      final port = int.tryParse((cfg['port'] ?? '').toString()) ??
-          (useTLS ? 443 : 80);
+      final port =
+          int.tryParse((cfg['port'] ?? '').toString()) ?? (useTLS ? 443 : 80);
 
       await _safeDisconnect();
       await _pusher.init(

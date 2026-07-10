@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/storage.dart';
 import '../../core/urls.dart';
@@ -81,7 +83,8 @@ class AuthController extends GetxController {
         'password': password,
         if (email != null && email.trim().isNotEmpty) 'email': email.trim(),
         if (phone != null && phone.trim().isNotEmpty) 'phone': phone.trim(),
-        if (address != null && address.trim().isNotEmpty) 'address': address.trim(),
+        if (address != null && address.trim().isNotEmpty)
+          'address': address.trim(),
       });
       if (!res.success) {
         final msg = res.firstMessage;
@@ -102,5 +105,37 @@ class AuthController extends GetxController {
     }
     await _storage.clear();
     restaurant.value = null;
+  }
+
+  Future<String?> updatePictures({XFile? logo, XFile? cover}) async {
+    if (logo == null && cover == null) return 'Choose a logo or cover image.';
+    busy.value = true;
+    try {
+      final form = dio.FormData.fromMap({
+        if (logo != null)
+          'logo': await dio.MultipartFile.fromFile(
+            logo.path,
+            filename: logo.name,
+          ),
+        if (cover != null)
+          'cover_image': await dio.MultipartFile.fromFile(
+            cover.path,
+            filename: cover.name,
+          ),
+      });
+      final res = await _api.postMultipart(Urls.profileImages, form);
+      if (!res.success) {
+        return res.firstMessage.isNotEmpty
+            ? res.firstMessage
+            : 'Could not upload pictures.';
+      }
+      final raw =
+          (res.data['restaurant'] as Map?)?.cast<String, dynamic>() ?? {};
+      await _storage.saveRestaurant(raw);
+      restaurant.value = Restaurant.fromJson(raw);
+      return null;
+    } finally {
+      busy.value = false;
+    }
   }
 }

@@ -6,8 +6,9 @@ import 'storage.dart';
 /// Formats a money amount using the currency symbol captured at login. Falls
 /// back to a bare number if storage isn't registered yet (e.g. in tests).
 String money(num amount) {
-  final symbol =
-      Get.isRegistered<AppStorage>() ? Get.find<AppStorage>().currency : '';
+  final symbol = Get.isRegistered<AppStorage>()
+      ? Get.find<AppStorage>().currency
+      : '';
   final formatted = NumberFormat('#,##0.##').format(amount);
   return symbol.isEmpty ? formatted : '$symbol$formatted';
 }

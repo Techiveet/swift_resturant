@@ -44,7 +44,8 @@ class PushService {
     );
     await _local
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(_channel);
     _localReady = true;
   }
@@ -102,8 +103,9 @@ class PushService {
 
   Future<void> _registerToken(String token) async {
     try {
-      await Get.find<ApiService>()
-          .post(Urls.saveDeviceToken, {'token': token}, auth: true);
+      await Get.find<ApiService>().post(Urls.saveDeviceToken, {
+        'token': token,
+      }, auth: true);
     } catch (_) {
       // Non-fatal — the owner still sees orders via socket/poll.
     }

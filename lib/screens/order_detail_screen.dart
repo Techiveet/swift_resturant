@@ -90,23 +90,33 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(order.reference,
-                    style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.ink)),
+                Text(
+                  order.reference,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.ink,
+                  ),
+                ),
                 if (order.createdAt != null) ...[
                   const SizedBox(height: 4),
-                  Text(prettyDateTime(order.createdAt),
-                      style:
-                          const TextStyle(color: AppColors.muted, fontSize: 12)),
+                  Text(
+                    prettyDateTime(order.createdAt),
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
                 const SizedBox(height: 6),
-                Text('Kitchen: ${order.kitchenLabel}',
-                    style: const TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700)),
+                Text(
+                  'Kitchen: ${order.kitchenLabel}',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
             ),
           ),
@@ -122,23 +132,45 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     final buttons = <Widget>[];
     if (order.canAccept) {
-      buttons.add(Expanded(
-        child: _actionButton('Accept', AppColors.primary, Colors.white,
-            () => _runAction(() => _orders.acceptOrder(order.id), 'Order accepted')),
-      ));
+      buttons.add(
+        Expanded(
+          child: _actionButton(
+            'Accept',
+            AppColors.primary,
+            Colors.white,
+            () => _runAction(
+              () => _orders.acceptOrder(order.id),
+              'Order accepted',
+            ),
+          ),
+        ),
+      );
     }
     if (order.canReady) {
-      buttons.add(Expanded(
-        child: _actionButton('Mark Ready', const Color(0xFF2563EB), Colors.white,
-            () => _runAction(() => _orders.markReady(order.id), 'Marked ready')),
-      ));
+      buttons.add(
+        Expanded(
+          child: _actionButton(
+            'Mark Ready',
+            const Color(0xFF2563EB),
+            Colors.white,
+            () => _runAction(() => _orders.markReady(order.id), 'Marked ready'),
+          ),
+        ),
+      );
     }
     if (order.canReject) {
       if (buttons.isNotEmpty) buttons.add(const SizedBox(width: 10));
-      buttons.add(Expanded(
-        child: _actionButton('Reject', Colors.white, AppColors.danger,
-            () => _confirmReject(order), outlined: true),
-      ));
+      buttons.add(
+        Expanded(
+          child: _actionButton(
+            'Reject',
+            Colors.white,
+            AppColors.danger,
+            () => _confirmReject(order),
+            outlined: true,
+          ),
+        ),
+      );
     }
 
     return SafeArea(
@@ -147,8 +179,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     );
   }
 
-  Widget _actionButton(String label, Color bg, Color fg, VoidCallback onTap,
-      {bool outlined = false}) {
+  Widget _actionButton(
+    String label,
+    Color bg,
+    Color fg,
+    VoidCallback onTap, {
+    bool outlined = false,
+  }) {
     return SizedBox(
       height: 50,
       child: ElevatedButton(
@@ -157,8 +194,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           backgroundColor: bg,
           foregroundColor: fg,
           elevation: 0,
-          side: outlined ? const BorderSide(color: AppColors.danger) : BorderSide.none,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          side: outlined
+              ? const BorderSide(color: AppColors.danger)
+              : BorderSide.none,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
       ),
@@ -174,29 +215,45 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('The customer will be refunded. Add a reason (optional):'),
+            const Text(
+              'The customer will be refunded. Add a reason (optional):',
+            ),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(hintText: 'e.g. out of an ingredient'),
+              decoration: const InputDecoration(
+                hintText: 'e.g. out of an ingredient',
+              ),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Reject', style: TextStyle(color: AppColors.danger)),
+            child: const Text(
+              'Reject',
+              style: TextStyle(color: AppColors.danger),
+            ),
           ),
         ],
       ),
     );
     if (ok == true) {
-      await _runAction(() => _orders.rejectOrder(order.id, controller.text.trim()), 'Order rejected');
+      await _runAction(
+        () => _orders.rejectOrder(order.id, controller.text.trim()),
+        'Order rejected',
+      );
     }
   }
 
-  Future<void> _runAction(Future<String?> Function() action, String successMsg) async {
+  Future<void> _runAction(
+    Future<String?> Function() action,
+    String successMsg,
+  ) async {
     setState(() => _acting = true);
     final error = await action();
     if (!mounted) return;
@@ -265,20 +322,29 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       color: AppColors.scaffold,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text('${item.quantity}×',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: AppColors.ink)),
+                    child: Text(
+                      '${item.quantity}×',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12,
+                        color: AppColors.ink,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(item.name,
-                        style: const TextStyle(color: AppColors.ink)),
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(color: AppColors.ink),
+                    ),
                   ),
-                  Text(money(item.subtotal),
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, color: AppColors.ink)),
+                  Text(
+                    money(item.subtotal),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -301,15 +367,22 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.payments_outlined,
-                  size: 18, color: AppColors.muted),
+              const Icon(
+                Icons.payments_outlined,
+                size: 18,
+                color: AppColors.muted,
+              ),
               const SizedBox(width: 8),
-              Text(order.paymentTypeLabel,
-                  style: const TextStyle(color: AppColors.muted)),
+              Text(
+                order.paymentTypeLabel,
+                style: const TextStyle(color: AppColors.muted),
+              ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: (order.isPaid ? AppColors.success : AppColors.warning)
                       .withValues(alpha: 0.12),
@@ -360,28 +433,28 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   Widget _sectionTitle(String text) => Text(
-        text.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.6,
-          color: AppColors.muted,
-        ),
-      );
+    text.toUpperCase(),
+    style: const TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 0.6,
+      color: AppColors.muted,
+    ),
+  );
 
   Widget _kv(IconData icon, String value) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 18, color: AppColors.muted),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(value, style: const TextStyle(color: AppColors.ink)),
-            ),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 18, color: AppColors.muted),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(value, style: const TextStyle(color: AppColors.ink)),
         ),
-      );
+      ],
+    ),
+  );
 
   Widget _totalRow(String label, String value, {bool emphasize = false}) {
     final style = TextStyle(
@@ -394,10 +467,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: emphasize
-                  ? style
-                  : const TextStyle(color: AppColors.muted)),
+          Text(
+            label,
+            style: emphasize ? style : const TextStyle(color: AppColors.muted),
+          ),
           Text(value, style: style),
         ],
       ),

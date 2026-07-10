@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/urls.dart';
 import '../api_service.dart';
@@ -30,14 +32,19 @@ class RestaurantMenuController extends GetxController {
       final res = await _api.get(Urls.menu);
       if (!res.success) {
         if (!silent) {
-          error.value = res.firstMessage.isNotEmpty ? res.firstMessage : 'Could not load your menu.';
+          error.value = res.firstMessage.isNotEmpty
+              ? res.firstMessage
+              : 'Could not load your menu.';
         }
         return;
       }
       final paginator = res.data['items'];
-      final rows = (paginator is Map ? paginator['data'] : null) as List? ?? const [];
+      final rows =
+          (paginator is Map ? paginator['data'] : null) as List? ?? const [];
       items.assignAll(
-        rows.whereType<Map>().map((e) => FoodMenuItem.fromJson(e.cast<String, dynamic>())),
+        rows.whereType<Map>().map(
+          (e) => FoodMenuItem.fromJson(e.cast<String, dynamic>()),
+        ),
       );
     } finally {
       if (!silent) loading.value = false;
@@ -49,20 +56,33 @@ class RestaurantMenuController extends GetxController {
     required String name,
     String? description,
     required double price,
+    XFile? image,
+    String? arModelUrl,
+    String? arIosModelUrl,
   }) async {
     saving.value = true;
     try {
       final url = id == null ? Urls.menuStore : '${Urls.menuUpdate}$id';
-      final res = await _api.post(url, {
+      final form = dio.FormData.fromMap({
         'name': name,
         'description': description ?? '',
         'price': price,
-      }, auth: true);
+        'ar_model_url': arModelUrl ?? '',
+        'ar_ios_model_url': arIosModelUrl ?? '',
+        if (image != null)
+          'image': await dio.MultipartFile.fromFile(
+            image.path,
+            filename: image.name,
+          ),
+      });
+      final res = await _api.postMultipart(url, form);
       if (res.success) {
         await load(silent: true);
         return null;
       }
-      return res.firstMessage.isNotEmpty ? res.firstMessage : 'Could not save the item.';
+      return res.firstMessage.isNotEmpty
+          ? res.firstMessage
+          : 'Could not save the item.';
     } finally {
       saving.value = false;
     }
@@ -74,7 +94,9 @@ class RestaurantMenuController extends GetxController {
       await load(silent: true);
       return null;
     }
-    return res.firstMessage.isNotEmpty ? res.firstMessage : 'Could not update availability.';
+    return res.firstMessage.isNotEmpty
+        ? res.firstMessage
+        : 'Could not update availability.';
   }
 
   Future<String?> remove(int id) async {
@@ -83,6 +105,8 @@ class RestaurantMenuController extends GetxController {
       await load(silent: true);
       return null;
     }
-    return res.firstMessage.isNotEmpty ? res.firstMessage : 'Could not delete the item.';
+    return res.firstMessage.isNotEmpty
+        ? res.firstMessage
+        : 'Could not delete the item.';
   }
 }

@@ -106,10 +106,10 @@ class OrderParty {
   factory OrderParty.fromJson(Map<String, dynamic> json) {
     final first = json['firstname']?.toString();
     final last = json['lastname']?.toString();
-    final composed = [first, last]
-        .where((p) => p != null && p.isNotEmpty)
-        .join(' ')
-        .trim();
+    final composed = [
+      first,
+      last,
+    ].where((p) => p != null && p.isNotEmpty).join(' ').trim();
     return OrderParty(
       name: (json['name'] ?? (composed.isEmpty ? null : composed))?.toString(),
       phone: (json['mobile'] ?? json['phone'])?.toString(),
@@ -164,7 +164,8 @@ class FoodOrder {
 
   // Which restaurant actions apply, based on the kitchen state.
   bool get canAccept =>
-      restaurantStatus == KitchenStatus.pending && status != OrderStatus.canceled;
+      restaurantStatus == KitchenStatus.pending &&
+      status != OrderStatus.canceled;
   bool get canReady => restaurantStatus == KitchenStatus.preparing;
   bool get canReject =>
       (restaurantStatus == KitchenStatus.pending ||
