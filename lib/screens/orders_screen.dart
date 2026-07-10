@@ -8,6 +8,7 @@ import '../data/controllers/orders_controller.dart';
 import '../data/controllers/realtime_controller.dart';
 import '../data/models/food_order.dart';
 import 'login_screen.dart';
+import 'menu_screen.dart';
 import 'order_detail_screen.dart';
 import 'order_status_chip.dart';
 
@@ -29,6 +30,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     super.initState();
     _scroll.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _orders.syncOpenFromAuth();
       _orders.refreshOrders();
       _orders.startPolling();
       _realtime.start();
@@ -48,6 +50,20 @@ class _OrdersScreenState extends State<OrdersScreen> {
     if (_scroll.position.pixels >= _scroll.position.maxScrollExtent - 240) {
       _orders.loadMore();
     }
+  }
+
+  Future<void> _toggleOpen() async {
+    final next = !_orders.isOpen.value;
+    final error = await _orders.setOpen(next);
+    if (!mounted) return;
+    Get.snackbar(
+      error == null ? (next ? 'Open for orders' : 'Now closed') : 'Could not update',
+      error ?? (next ? 'Customers can order again.' : 'New orders are paused.'),
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: error == null ? AppColors.primary : AppColors.danger,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(12),
+    );
   }
 
   Future<void> _confirmLogout() async {
@@ -95,6 +111,39 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ),
         ),
         actions: [
+          Obx(() {
+            final open = _orders.isOpen.value;
+            return GestureDetector(
+              onTap: _toggleOpen,
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: open ? AppColors.success : Colors.white24,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(open ? Icons.check_circle : Icons.pause_circle_filled,
+                        size: 15, color: Colors.white),
+                    const SizedBox(width: 5),
+                    Text(open ? 'Open' : 'Closed',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12)),
+                  ],
+                ),
+              ),
+            );
+          }),
+          IconButton(
+            tooltip: 'Menu',
+            icon: const Icon(Icons.restaurant_menu),
+            onPressed: () => Get.to<void>(() => const MenuScreen()),
+          ),
           IconButton(
             tooltip: 'Refresh',
             icon: const Icon(Icons.refresh),
@@ -168,13 +217,28 @@ class _OrderCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(
-                      order.reference,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 15,
-                        color: AppColors.ink,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          order.reference,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                            color: AppColors.ink,
+                          ),
+                        ),
+                        if (order.isLive && order.restaurantStatus != KitchenStatus.rejected) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            order.kitchenLabel,
+                            style: const TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                   OrderStatusChip(status: order.status),

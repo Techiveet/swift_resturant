@@ -21,6 +21,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   FoodOrder? _order;
   bool _loading = true;
+  bool _acting = false;
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
       appBar: AppBar(
         title: Text(order != null ? 'Order ${order.reference}' : 'Order'),
       ),
+      bottomNavigationBar: order == null ? null : _actionBar(order),
       body: order == null
           ? Center(
               child: _loading
@@ -99,12 +101,115 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                       style:
                           const TextStyle(color: AppColors.muted, fontSize: 12)),
                 ],
+                const SizedBox(height: 6),
+                Text('Kitchen: ${order.kitchenLabel}',
+                    style: const TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700)),
               ],
             ),
           ),
           OrderStatusChip(status: order.status),
         ],
       ),
+    );
+  }
+
+  /// Accept / Ready / Reject actions, shown only for the states they apply to.
+  Widget? _actionBar(FoodOrder order) {
+    if (!order.canAccept && !order.canReady && !order.canReject) return null;
+
+    final buttons = <Widget>[];
+    if (order.canAccept) {
+      buttons.add(Expanded(
+        child: _actionButton('Accept', AppColors.primary, Colors.white,
+            () => _runAction(() => _orders.acceptOrder(order.id), 'Order accepted')),
+      ));
+    }
+    if (order.canReady) {
+      buttons.add(Expanded(
+        child: _actionButton('Mark Ready', const Color(0xFF2563EB), Colors.white,
+            () => _runAction(() => _orders.markReady(order.id), 'Marked ready')),
+      ));
+    }
+    if (order.canReject) {
+      if (buttons.isNotEmpty) buttons.add(const SizedBox(width: 10));
+      buttons.add(Expanded(
+        child: _actionButton('Reject', Colors.white, AppColors.danger,
+            () => _confirmReject(order), outlined: true),
+      ));
+    }
+
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      child: Row(children: buttons),
+    );
+  }
+
+  Widget _actionButton(String label, Color bg, Color fg, VoidCallback onTap,
+      {bool outlined = false}) {
+    return SizedBox(
+      height: 50,
+      child: ElevatedButton(
+        onPressed: _acting ? null : onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: bg,
+          foregroundColor: fg,
+          elevation: 0,
+          side: outlined ? const BorderSide(color: AppColors.danger) : BorderSide.none,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+      ),
+    );
+  }
+
+  Future<void> _confirmReject(FoodOrder order) async {
+    final controller = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reject order?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('The customer will be refunded. Add a reason (optional):'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: 'e.g. out of an ingredient'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Reject', style: TextStyle(color: AppColors.danger)),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) {
+      await _runAction(() => _orders.rejectOrder(order.id, controller.text.trim()), 'Order rejected');
+    }
+  }
+
+  Future<void> _runAction(Future<String?> Function() action, String successMsg) async {
+    setState(() => _acting = true);
+    final error = await action();
+    if (!mounted) return;
+    setState(() => _acting = false);
+    await _load();
+    if (!mounted) return;
+    Get.snackbar(
+      error == null ? 'Done' : 'Could not complete',
+      error ?? successMsg,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: error == null ? AppColors.primary : AppColors.danger,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(12),
     );
   }
 

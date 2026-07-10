@@ -27,6 +27,28 @@ class OrderStatus {
       status == pending || status == accepted || status == pickedUp;
 }
 
+/// Kitchen (restaurant-side) status — must match App\Constants\Status
+/// (KITCHEN_*). Tracked separately from the delivery status above.
+class KitchenStatus {
+  static const int pending = 0;
+  static const int preparing = 1;
+  static const int ready = 2;
+  static const int rejected = 9;
+
+  static String label(int status) {
+    switch (status) {
+      case preparing:
+        return 'Preparing';
+      case ready:
+        return 'Ready for pickup';
+      case rejected:
+        return 'Rejected';
+      default:
+        return 'New — needs confirmation';
+    }
+  }
+}
+
 /// Payment type codes — must match App\Constants\Status (PAYMENT_TYPE_*).
 class PaymentType {
   static const int gateway = 1;
@@ -101,6 +123,7 @@ class FoodOrder {
     required this.id,
     required this.uid,
     required this.status,
+    required this.restaurantStatus,
     required this.paymentType,
     required this.paymentStatus,
     required this.itemsAmount,
@@ -118,6 +141,7 @@ class FoodOrder {
   final int id;
   final String uid;
   final int status;
+  final int restaurantStatus;
   final int paymentType;
   final int paymentStatus;
   final double itemsAmount;
@@ -132,10 +156,22 @@ class FoodOrder {
   final OrderParty? driver;
 
   String get statusLabel => OrderStatus.label(status);
+  String get kitchenLabel => KitchenStatus.label(restaurantStatus);
   String get paymentTypeLabel => PaymentType.label(paymentType);
   bool get isLive => OrderStatus.isLive(status);
   bool get isPaid => paymentStatus == 1;
   int get itemCount => items.fold(0, (sum, i) => sum + i.quantity);
+
+  // Which restaurant actions apply, based on the kitchen state.
+  bool get canAccept =>
+      restaurantStatus == KitchenStatus.pending && status != OrderStatus.canceled;
+  bool get canReady => restaurantStatus == KitchenStatus.preparing;
+  bool get canReject =>
+      (restaurantStatus == KitchenStatus.pending ||
+          restaurantStatus == KitchenStatus.preparing) &&
+      status != OrderStatus.pickedUp &&
+      status != OrderStatus.delivered &&
+      status != OrderStatus.canceled;
 
   /// A short human reference, e.g. "#1042" (falls back to the uid).
   String get reference => uid.isNotEmpty ? uid : '#$id';
@@ -146,6 +182,7 @@ class FoodOrder {
       id: _asInt(json['id']),
       uid: (json['uid'] ?? '').toString(),
       status: _asInt(json['status']),
+      restaurantStatus: _asInt(json['restaurant_status']),
       paymentType: _asInt(json['payment_type'], fallback: PaymentType.cash),
       paymentStatus: _asInt(json['payment_status']),
       itemsAmount: _asDouble(json['items_amount']),

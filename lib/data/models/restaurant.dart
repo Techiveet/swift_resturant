@@ -30,6 +30,14 @@ class Restaurant {
 
   bool get isActive => status == 1;
 
+  /// Owner's open/closed toggle (defaults open). Backend casts it to a bool,
+  /// but tolerate 1/0 too.
+  bool get isOpen {
+    final v = raw['is_open'];
+    if (v is bool) return v;
+    return _asInt(v, fallback: 1) == 1;
+  }
+
   String? get logoUrl => _imageUrl(logo);
   String? get coverImageUrl => _imageUrl(coverImage);
 

@@ -6,6 +6,7 @@ import '../../core/urls.dart';
 import '../../environment.dart';
 import '../api_service.dart';
 import '../models/food_order.dart';
+import 'auth_controller.dart';
 
 /// Loads and holds the restaurant's order list. Watches for new orders two
 /// ways: a lightweight fallback poll (Environment.pollInterval) and, when the
@@ -90,6 +91,46 @@ class OrdersController extends GetxController {
         FoodOrder.fromJson((res.data['order'] as Map).cast<String, dynamic>());
     ingest(order);
     return order;
+  }
+
+  // ---- Restaurant order workflow ---------------------------------------
+
+  /// Owner's open/closed state, seeded from the logged-in restaurant.
+  final RxBool isOpen = true.obs;
+
+  void syncOpenFromAuth() {
+    if (Get.isRegistered<AuthController>()) {
+      final r = Get.find<AuthController>().restaurant.value;
+      if (r != null) isOpen.value = r.isOpen;
+    }
+  }
+
+  Future<String?> acceptOrder(int id) => _orderAction('${Urls.acceptOrder}$id', null);
+  Future<String?> markReady(int id) => _orderAction('${Urls.readyOrder}$id', null);
+  Future<String?> rejectOrder(int id, String? reason) =>
+      _orderAction('${Urls.rejectOrder}$id', {'reason': reason ?? ''});
+
+  Future<String?> _orderAction(String url, Map<String, dynamic>? body) async {
+    final res = await _api.post(url, body ?? {}, auth: true);
+    if (res.success && res.data['order'] is Map) {
+      ingest(FoodOrder.fromJson((res.data['order'] as Map).cast<String, dynamic>()));
+    } else {
+      await refreshOrders(silent: true);
+    }
+    return res.success
+        ? null
+        : (res.firstMessage.isNotEmpty ? res.firstMessage : 'Action failed. Please try again.');
+  }
+
+  /// Toggle whether the restaurant is accepting new orders. Returns null on
+  /// success or an error message.
+  Future<String?> setOpen(bool open) async {
+    final res = await _api.post(Urls.setOpen, {'is_open': open ? 1 : 0}, auth: true);
+    if (res.success) {
+      isOpen.value = open;
+      return null;
+    }
+    return res.firstMessage.isNotEmpty ? res.firstMessage : 'Could not update your status.';
   }
 
   void startPolling() {
