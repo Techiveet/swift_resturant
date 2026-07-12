@@ -57,6 +57,8 @@ class AppStorage {
     if (symbol == null) return;
     await _prefs.setString(_kCurrency, symbol);
   }
+  String? announcementSeen(String key) => _prefs.getString(key);
+  Future<void> markAnnouncementSeen(String key,String value) => _prefs.setString(key,value);
 
   Future<void> clear() async {
     await _prefs.remove(_kToken);

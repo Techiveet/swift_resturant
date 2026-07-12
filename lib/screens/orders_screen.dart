@@ -12,6 +12,7 @@ import 'menu_screen.dart';
 import 'restaurant_pictures_screen.dart';
 import 'order_detail_screen.dart';
 import 'order_status_chip.dart';
+import '../widgets/in_app_announcement_host.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -76,6 +77,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         title: const Text('Log out?'),
         content: const Text('You will need to sign in again to view orders.'),
         actions: [
+          const InAppAnnouncementHost(),
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: const Text('Cancel'),
