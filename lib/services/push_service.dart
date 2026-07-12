@@ -27,6 +27,7 @@ class PushService {
       FlutterLocalNotificationsPlugin();
   bool _localReady = false;
   bool _fcmReady = false;
+  bool _refreshBound = false;
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'orders',
@@ -93,21 +94,33 @@ class PushService {
       });
 
       final token = await messaging.getToken();
-      if (token != null && token.isNotEmpty) await _registerToken(token);
-      messaging.onTokenRefresh.listen(_registerToken);
-      _fcmReady = true;
+      final registered =
+          token != null && token.isNotEmpty && await _registerToken(token);
+      if (!_refreshBound) {
+        _refreshBound = true;
+        messaging.onTokenRefresh.listen((token) async {
+          await _registerToken(token);
+        });
+      }
+      _fcmReady = registered;
     } catch (e) {
       if (kDebugMode) debugPrint('Push: FCM setup error ($e)');
     }
   }
 
-  Future<void> _registerToken(String token) async {
+  Future<bool> _registerToken(String token) async {
     try {
-      await Get.find<ApiService>().post(Urls.saveDeviceToken, {
+      final result = await Get.find<ApiService>().post(Urls.saveDeviceToken, {
         'token': token,
       }, auth: true);
-    } catch (_) {
+      if (!result.success && kDebugMode) {
+        debugPrint('Push: token registration failed (${result.firstMessage})');
+      }
+      return result.success;
+    } catch (error) {
       // Non-fatal — the owner still sees orders via socket/poll.
+      if (kDebugMode) debugPrint('Push: token registration error ($error)');
+      return false;
     }
   }
 }
