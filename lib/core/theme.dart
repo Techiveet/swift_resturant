@@ -1,106 +1,143 @@
 import 'package:flutter/material.dart';
 
-/// Dejen brand palette + Material theme for the restaurant app.
 class AppColors {
-  static const Color primary = Color(0xFF16B45A);
-  static const Color primaryDark = Color(0xFF0E8F46);
+  static const Color primary = Color(0xFF0F9D58);
+  static const Color primaryDark = Color(0xFF08783F);
   static const Color ink = Color(0xFF0C1813);
-  static const Color scaffold = Color(0xFFF1F5F9);
+  static const Color scaffold = Color(0xFFF4F7F5);
   static const Color card = Colors.white;
   static const Color muted = Color(0xFF64748B);
-  static const Color border = Color(0xFFE2E8F0);
-
+  static const Color border = Color(0xFFD7E0DA);
   static const Color info = Color(0xFF2563EB);
   static const Color warning = Color(0xFFD97706);
-  static const Color danger = Color(0xFFEF4444);
+  static const Color danger = Color(0xFFDC2626);
   static const Color success = Color(0xFF15803D);
 }
 
 class AppTheme {
-  static ThemeData get light {
-    final base = ThemeData.light(useMaterial3: true);
+  static ThemeData get light => _build(Brightness.light);
+  static ThemeData get dark => _build(Brightness.dark);
+
+  static ThemeData _build(Brightness brightness) {
+    final dark = brightness == Brightness.dark;
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: brightness,
+        ).copyWith(
+          primary: dark ? const Color(0xFF5DDB91) : AppColors.primaryDark,
+          onPrimary: dark ? AppColors.ink : Colors.white,
+          surface: dark ? const Color(0xFF15211B) : Colors.white,
+          onSurface: dark ? const Color(0xFFF0F7F2) : AppColors.ink,
+          outline: dark ? const Color(0xFF53655A) : AppColors.border,
+        );
+    final base = ThemeData(useMaterial3: true, colorScheme: scheme);
+    final buttonShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    );
+
     return base.copyWith(
-      scaffoldBackgroundColor: AppColors.scaffold,
-      primaryColor: AppColors.primary,
-      colorScheme: base.colorScheme.copyWith(
-        primary: AppColors.primary,
-        secondary: AppColors.primary,
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.ink,
+      scaffoldBackgroundColor: dark
+          ? const Color(0xFF0C1510)
+          : AppColors.scaffold,
+      appBarTheme: AppBarTheme(
+        backgroundColor: dark ? const Color(0xFF101C16) : AppColors.ink,
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 19,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: scheme.surface,
+        elevation: dark ? 0 : 1,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: scheme.outlineVariant),
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          disabledBackgroundColor: scheme.onSurface.withValues(alpha: .12),
+          disabledForegroundColor: scheme.onSurface.withValues(alpha: .45),
+          minimumSize: const Size(64, 54),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          shape: buttonShape,
+          elevation: 1,
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.ink,
-          minimumSize: const Size(64, 52),
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          backgroundColor: scheme.primary,
+          foregroundColor: scheme.onPrimary,
+          disabledBackgroundColor: scheme.onSurface.withValues(alpha: .12),
+          disabledForegroundColor: scheme.onSurface.withValues(alpha: .45),
+          minimumSize: const Size(64, 54),
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+          shape: buttonShape,
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.ink,
-          minimumSize: const Size(64, 52),
-          side: const BorderSide(color: AppColors.primaryDark, width: 1.3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          foregroundColor: scheme.onSurface,
+          minimumSize: const Size(64, 54),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          side: BorderSide(color: scheme.primary, width: 1.5),
+          shape: buttonShape,
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryDark,
+          foregroundColor: scheme.primary,
           minimumSize: const Size(48, 48),
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
+          foregroundColor: scheme.onSurface,
           minimumSize: const Size(48, 48),
           padding: const EdgeInsets.all(12),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.ink,
-        elevation: 3,
-        extendedTextStyle: TextStyle(fontWeight: FontWeight.w800),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        elevation: 4,
+        extendedTextStyle: const TextStyle(fontWeight: FontWeight.w800),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: scheme.surface,
+        labelStyle: TextStyle(color: scheme.onSurfaceVariant),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: scheme.outline),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: scheme.outline),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(color: scheme.primary, width: 2),
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: scheme.surface,
+        modalBackgroundColor: scheme.surface,
+        showDragHandle: true,
+      ),
+      dialogTheme: DialogThemeData(backgroundColor: scheme.surface),
     );
   }
 }

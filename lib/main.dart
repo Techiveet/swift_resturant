@@ -46,6 +46,8 @@ class RestaurantApp extends StatelessWidget {
       title: Environment.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
       home: const SplashScreen(),
     );
   }

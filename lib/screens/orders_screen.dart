@@ -160,25 +160,62 @@ class _OrdersScreenState extends State<OrdersScreen> {
             );
           }),
           IconButton(
-            tooltip: 'Menu',
-            icon: const Icon(Icons.restaurant_menu),
-            onPressed: () => Get.to<void>(() => const MenuScreen()),
-          ),
-          IconButton(
-            tooltip: 'Restaurant pictures',
-            icon: const Icon(Icons.add_photo_alternate_outlined),
-            onPressed: () =>
-                Get.to<void>(() => const RestaurantPicturesScreen()),
-          ),
-          IconButton(
             tooltip: 'Refresh',
             icon: const Icon(Icons.refresh),
             onPressed: () => _orders.refreshOrders(),
           ),
-          IconButton(
-            tooltip: 'Log out',
-            icon: const Icon(Icons.logout),
-            onPressed: _confirmLogout,
+          PopupMenuButton<String>(
+            tooltip: 'Open restaurant tools',
+            onSelected: (value) {
+              if (value == 'menu') Get.to<void>(() => const MenuScreen());
+              if (value == 'photos') {
+                Get.to<void>(() => const RestaurantPicturesScreen());
+              }
+              if (value == 'logout') _confirmLogout();
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'menu',
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.restaurant_menu),
+                  title: Text('Manage menu'),
+                ),
+              ),
+              PopupMenuItem(
+                value: 'photos',
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.add_photo_alternate_outlined),
+                  title: Text('Restaurant pictures'),
+                ),
+              ),
+              PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'logout',
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Icon(Icons.logout, color: AppColors.danger),
+                  title: Text('Log out'),
+                ),
+              ),
+            ],
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  Icon(Icons.grid_view_rounded, color: Colors.white, size: 20),
+                  SizedBox(width: 6),
+                  Text(
+                    'Manage',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
