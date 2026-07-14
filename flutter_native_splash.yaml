@@ -4,7 +4,7 @@ flutter_native_splash:
   color: "#FFFFFF"
   image: assets/branding/splash/dejen_splash_logo.png
   color_dark: "#0C1813"
-  image_dark: assets/branding/splash/dejen_splash_logo.png
+  image_dark: assets/branding/splash/dejen_splash_logo_dark.png
 
   # Android 12+ shows the splash icon inside a circle. Setting icon_background_color
   # to match the splash background makes that circle blend in (no visible disc — just
@@ -13,7 +13,7 @@ flutter_native_splash:
     color: "#FFFFFF"
     image: assets/branding/splash/dejen_splash_logo.png
     color_dark: "#0C1813"
-    image_dark: assets/branding/splash/dejen_splash_logo.png
+    image_dark: assets/branding/splash/dejen_splash_logo_dark.png
 
   android: true
   ios: true
