@@ -25,6 +25,7 @@ dependencies:
 
   # Local persistence (auth token, cached restaurant)
   shared_preferences: ^2.5.5
+  flutter_secure_storage: ^10.2.0
 
   # Formatting
   intl: ^0.20.2
@@ -61,3 +62,11 @@ flutter:
     - assets/branding/
     - assets/branding/icon/
     - assets/branding/splash/
+
+  fonts:
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Outfit-Bold.ttf
+          weight: 700

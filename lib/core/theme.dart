@@ -15,6 +15,8 @@ class AppColors {
 }
 
 class AppTheme {
+  static const String fontFamily = 'Outfit';
+
   static ThemeData get light => _build(Brightness.light);
   static ThemeData get dark => _build(Brightness.dark);
 
@@ -31,12 +33,51 @@ class AppTheme {
           onSurface: dark ? const Color(0xFFF0F7F2) : AppColors.ink,
           outline: dark ? const Color(0xFF53655A) : AppColors.border,
         );
-    final base = ThemeData(useMaterial3: true, colorScheme: scheme);
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      fontFamily: fontFamily,
+    );
     final buttonShape = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16),
     );
 
     return base.copyWith(
+      textTheme: base.textTheme.copyWith(
+        headlineMedium: base.textTheme.headlineMedium?.copyWith(
+          fontSize: 28,
+          height: 1.18,
+          fontWeight: FontWeight.w800,
+        ),
+        headlineSmall: base.textTheme.headlineSmall?.copyWith(
+          fontSize: 24,
+          height: 1.22,
+          fontWeight: FontWeight.w800,
+        ),
+        titleLarge: base.textTheme.titleLarge?.copyWith(
+          fontSize: 20,
+          height: 1.3,
+          fontWeight: FontWeight.w700,
+        ),
+        titleMedium: base.textTheme.titleMedium?.copyWith(
+          fontSize: 16,
+          height: 1.35,
+          fontWeight: FontWeight.w700,
+        ),
+        bodyLarge: base.textTheme.bodyLarge?.copyWith(
+          fontSize: 16,
+          height: 1.5,
+        ),
+        bodyMedium: base.textTheme.bodyMedium?.copyWith(
+          fontSize: 14,
+          height: 1.5,
+        ),
+        labelLarge: base.textTheme.labelLarge?.copyWith(
+          fontSize: 15,
+          height: 1.25,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
       scaffoldBackgroundColor: dark
           ? const Color(0xFF0C1510)
           : AppColors.scaffold,
@@ -138,6 +179,35 @@ class AppTheme {
         showDragHandle: true,
       ),
       dialogTheme: DialogThemeData(backgroundColor: scheme.surface),
+      navigationBarTheme: NavigationBarThemeData(
+        height: 72,
+        elevation: 0,
+        backgroundColor: scheme.surface,
+        indicatorColor: scheme.primary.withValues(alpha: .16),
+        labelTextStyle: WidgetStatePropertyAll(
+          TextStyle(
+            fontFamily: fontFamily,
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: scheme.onSurface,
+          ),
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: dark ? const Color(0xFFF0F7F2) : AppColors.ink,
+        contentTextStyle: TextStyle(
+          fontFamily: fontFamily,
+          color: dark ? AppColors.ink : Colors.white,
+          fontSize: 14,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      listTileTheme: ListTileThemeData(
+        minTileHeight: 56,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        iconColor: scheme.primary,
+      ),
     );
   }
 }

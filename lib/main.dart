@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/storage.dart';
 import 'core/theme.dart';
@@ -14,7 +13,7 @@ import 'screens/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final storage = AppStorage(await SharedPreferences.getInstance());
+  final storage = await AppStorage.create();
   final api = ApiService(storage);
 
   // Register the singletons the whole app shares. permanent: true keeps them

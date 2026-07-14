@@ -11,7 +11,9 @@ import 'package:hive_restaurant/screens/login_screen.dart';
 void main() {
   testWidgets('Login screen renders the sign-in form', (tester) async {
     SharedPreferences.setMockInitialValues({});
-    final storage = AppStorage(await SharedPreferences.getInstance());
+    final storage = AppStorage.forTesting(
+      await SharedPreferences.getInstance(),
+    );
     final api = ApiService(storage);
     Get.put<AppStorage>(storage);
     Get.put<ApiService>(api);
