@@ -6,14 +6,13 @@ flutter_native_splash:
   color_dark: "#0C1813"
   image_dark: assets/branding/splash/dejen_splash_logo_dark.png
 
-  # Android 12+ shows the splash icon inside a circle. Setting icon_background_color
-  # to match the splash background makes that circle blend in (no visible disc — just
-  # the shield).
+  # Android 12+ masks splash artwork to a circle. Use the complete app-icon
+  # composition so the Dejen shield stays inside the platform safe area.
   android_12:
     color: "#FFFFFF"
-    image: assets/branding/splash/dejen_splash_logo.png
+    image: assets/branding/icon/dejen_appicon.png
     color_dark: "#0C1813"
-    image_dark: assets/branding/splash/dejen_splash_logo_dark.png
+    image_dark: assets/branding/icon/dejen_appicon.png
 
   android: true
   ios: true
