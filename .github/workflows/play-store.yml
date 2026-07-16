@@ -16,6 +16,14 @@ on:
         options:
           - internal
           - production
+      release_status:
+        description: Use draft while the Play app itself is still in draft
+        required: true
+        default: completed
+        type: choice
+        options:
+          - completed
+          - draft
 
 concurrency:
   group: restaurant-play-store
@@ -105,4 +113,4 @@ jobs:
           packageName: com.techive.hive_restaurant
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: ${{ github.event_name == 'workflow_dispatch' && inputs.track || 'internal' }}
-          status: completed
+          status: ${{ github.event_name == 'workflow_dispatch' && inputs.release_status || 'completed' }}
