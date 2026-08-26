@@ -52,17 +52,32 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Validate deployment secrets
+      - name: Validate signing secrets
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          PLAY_STORE_CREDENTIALS: ${{ secrets.PLAY_STORE_CREDENTIALS }}
         run: |
-          for secret in KEYSTORE_BASE64 KEY_ALIAS KEY_PASSWORD STORE_PASSWORD PLAY_STORE_CREDENTIALS; do
+          # Only the signing secrets are needed to produce a bundle. Play
+          # credentials are checked separately, because Google refuses to let
+          # the API create a listing -- the first bundle of a new app has to be
+          # uploaded by hand, and this job is how you get that file.
+          for secret in KEYSTORE_BASE64 KEY_ALIAS KEY_PASSWORD STORE_PASSWORD; do
             [ -n "${!secret}" ] || { echo "Missing GitHub secret: $secret"; exit 1; }
           done
+
+      - name: Check for Play credentials
+        id: play
+        env:
+          PLAY_STORE_CREDENTIALS: ${{ secrets.PLAY_STORE_CREDENTIALS }}
+        run: |
+          if [ -n "$PLAY_STORE_CREDENTIALS" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::PLAY_STORE_CREDENTIALS is not set. The bundle will be built and attached to this run as an artifact, but not uploaded to Play. Download it from the Artifacts section and upload it in the Play Console."
+          fi
 
       - name: Decode Keystore
         env:
@@ -107,6 +122,7 @@ jobs:
           retention-days: 5
 
       - name: Upload to Play Store
+        if: steps.play.outputs.available == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CREDENTIALS }}
@@ -114,3 +130,7 @@ jobs:
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           track: ${{ github.event_name == 'workflow_dispatch' && inputs.track || 'internal' }}
           status: ${{ github.event_name == 'workflow_dispatch' && inputs.release_status || 'completed' }}
+
+      - name: Explain skipped Play upload
+        if: steps.play.outputs.available != 'true'
+        run: echo "Signed AAB built and attached as an artifact. Download it from this run and upload it in the Play Console -- Google requires the first bundle of a new app to be uploaded by hand. Add PLAY_STORE_CREDENTIALS to enable automatic upload afterwards."
