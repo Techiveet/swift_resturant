@@ -1,6 +1,6 @@
 # hive_restaurant
 
-Dejen restaurant owner companion app
+Swift restaurant owner companion app
 
 ## Getting Started
 
