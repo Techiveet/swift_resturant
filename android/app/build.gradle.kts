@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.techive.hive_restaurant"
+    namespace = "com.techiveet.swift.restaurant"
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -30,7 +30,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.techive.hive_restaurant"
+        applicationId = "com.techiveet.swift.restaurant"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
         versionCode = flutter.versionCode

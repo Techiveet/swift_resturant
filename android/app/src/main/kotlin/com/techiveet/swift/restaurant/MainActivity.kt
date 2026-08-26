@@ -1,4 +1,4 @@
-package com.techive.hive_restaurant
+package com.techiveet.swift.restaurant
 
 import io.flutter.embedding.android.FlutterActivity
 

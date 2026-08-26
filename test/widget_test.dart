@@ -2,11 +2,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:hive_restaurant/core/storage.dart';
-import 'package:hive_restaurant/core/theme.dart';
-import 'package:hive_restaurant/data/api_service.dart';
-import 'package:hive_restaurant/data/controllers/auth_controller.dart';
-import 'package:hive_restaurant/screens/login_screen.dart';
+import 'package:swift_restaurant/core/storage.dart';
+import 'package:swift_restaurant/core/theme.dart';
+import 'package:swift_restaurant/data/api_service.dart';
+import 'package:swift_restaurant/data/controllers/auth_controller.dart';
+import 'package:swift_restaurant/screens/login_screen.dart';
 
 void main() {
   testWidgets('Login screen renders the sign-in form', (tester) async {
